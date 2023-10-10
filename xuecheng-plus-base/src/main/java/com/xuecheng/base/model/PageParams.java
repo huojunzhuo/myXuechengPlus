@@ -1,5 +1,6 @@
 package com.xuecheng.base.model;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,13 +17,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(value = "分页参数",description = "分页参数模型类")
 public class PageParams {
 
     //当前页码 默认1L
-    @ApiModelProperty("当前页码")
+    @ApiModelProperty(value ="当前页码",required = true )
     private Long pageNo = 1L;
 
-    @ApiModelProperty("每页记录数默认值")
+    @ApiModelProperty(value ="每页记录数默认值",required = true )
     //每页记录数默认值 默认10L
     private Long pageSize =10L;
 

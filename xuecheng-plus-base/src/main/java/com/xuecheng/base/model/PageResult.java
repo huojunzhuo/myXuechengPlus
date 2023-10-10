@@ -1,5 +1,7 @@
 package com.xuecheng.base.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,17 +19,16 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(value = "分页返回信息",description = "分页返回信息")
 public class PageResult<T> {
-    //当前页码
+
+    @ApiModelProperty(value ="当前页码",required = true )
     private Long pageNo ;
-
-    //每页记录数
+    @ApiModelProperty(value ="每页记录数",required = true )
     private Long pageSize ;
-
-    // 数据列表
+    @ApiModelProperty(value ="数据列表",required = true )
     private List<T> items;
-
-    //总记录数
+    @ApiModelProperty(value ="总记录数",required = true )
     private long counts;
 
 }

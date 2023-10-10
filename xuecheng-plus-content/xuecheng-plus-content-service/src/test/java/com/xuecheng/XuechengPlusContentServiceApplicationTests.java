@@ -5,8 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.mapper.CourseBaseMapper;
+import com.xuecheng.content.mapper.CourseCategoryMapper;
+import com.xuecheng.content.model.dto.CourseCategoryTreeDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
+import com.xuecheng.content.model.po.CourseCategory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,5 +58,17 @@ class XuechengPlusContentServiceApplicationTests {
         PageResult<CourseBase> result = new PageResult<>(current,pageSize,records,total);
         System.out.println("result = " + result);
 
+    }
+    @Autowired
+    CourseCategoryMapper courseCategoryMapper;
+    @Test
+    public void testSelectTreeNodeMapper(){
+        List<CourseCategoryTreeDto> courseCategoryTreeDtos = courseCategoryMapper.selectTreeNodes("1-1");
+        System.out.println(courseCategoryTreeDtos);
+    }
+    @Test
+    public void test(){
+        List<CourseCategory> courseCategoryTreeDtos = courseCategoryMapper.selectAll("1");
+        System.out.println(courseCategoryTreeDtos);
     }
 }

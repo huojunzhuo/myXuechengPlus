@@ -219,7 +219,7 @@
             </dependency>
         </dependencies>
 
-</dependencyManagement>
+    </dependencyManagement>
 
     <build>
         <plugins>
@@ -228,6 +228,23 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <!--编译打包过虑配置,可以打包xml文件而不是去resource目录下去找-->
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
 </project>

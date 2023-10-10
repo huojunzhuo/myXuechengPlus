@@ -1,25 +1,23 @@
 package com.xuecheng.content.model.po;
 
-import java.io.Serializable;
-import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import java.io.Serializable;
 
 /**
- * <p>
  * 课程分类
- * </p>
- *
- * @author itcast
+ * @TableName course_category
  */
+@TableName(value ="course_category")
 @Data
-@TableName("course_category")
 public class CourseCategory implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
     /**
      * 主键
      */
+    @TableId
     private String id;
 
     /**
@@ -52,5 +50,6 @@ public class CourseCategory implements Serializable {
      */
     private Integer isLeaf;
 
-
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }
