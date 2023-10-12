@@ -18,7 +18,8 @@ import java.util.List;
  */
 @Data
 @ApiModel(value = "分类查询树形结构模型类",description = "分类查询树形结构模型类")
-public class CourseCategoryTreeDto extends CourseCategory implements Serializable {
+public class CourseCategoryTreeDto extends CourseCategory implements java.io.Serializable {
+    //子节点
     private List<CourseCategoryTreeDto> childrenTreeNodes;
 
 }

@@ -10,6 +10,7 @@ import com.xuecheng.content.model.dto.CourseCategoryTreeDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseCategory;
+import com.xuecheng.content.service.CourseCategoryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -63,12 +64,20 @@ class XuechengPlusContentServiceApplicationTests {
     CourseCategoryMapper courseCategoryMapper;
     @Test
     public void testSelectTreeNodeMapper(){
-        List<CourseCategoryTreeDto> courseCategoryTreeDtos = courseCategoryMapper.selectTreeNodes("1-1");
+        List<CourseCategoryTreeDto> courseCategories = courseCategoryMapper.selectTreeNodes("1-1");
+        System.out.println(courseCategories);
+    }
+    @Autowired
+    CourseCategoryService courseCategoryService;
+    @Test
+    public void testCourseCategoryService(){
+        List<CourseCategoryTreeDto> courseCategoryTreeDtos = courseCategoryService.queryTreeNodes("1");
         System.out.println(courseCategoryTreeDtos);
     }
+
     @Test
-    public void test(){
-        List<CourseCategory> courseCategoryTreeDtos = courseCategoryMapper.selectAll("1");
+    public void testCourseCategoryService1(){
+        List<CourseCategoryTreeDto> courseCategoryTreeDtos = courseCategoryService.queryTreeNodes1("1");
         System.out.println(courseCategoryTreeDtos);
     }
 }

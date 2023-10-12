@@ -23,7 +23,7 @@ public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
     public List<CourseCategoryTreeDto> selectTreeNodes( String id);
 
 //    @Select("select * from course_category where id = #{id}")
-    public List<CourseCategory> selectAll( String id);
+    public List<CourseCategoryTreeDto> selectAll( String id);
 
 }
 
