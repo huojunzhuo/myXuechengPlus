@@ -2,6 +2,8 @@ package com.xuecheng.content.api;
 
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
+import com.xuecheng.content.model.dto.AddCourseDto;
+import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.service.CourseBaseService;
@@ -25,11 +27,22 @@ public class CourseBaseInfoController {
 
     @Autowired
     CourseBaseService courseBaseService;
+
     @ApiOperation("课程查询接口")
     //pageParam参数通过URL请求参数传递，QueryCourseParamsDto参数通过请求体获取
-    @RequestMapping(method = RequestMethod.POST,value = "/course/list")
+    @RequestMapping(method = RequestMethod.POST, value = "/course/list")
     @ResponseBody
-    public PageResult<CourseBase> list(PageParams pageParams, @RequestBody(required = false) QueryCourseParamsDto queryCourseParamsDto){
-        return courseBaseService.list(pageParams,queryCourseParamsDto);
+    public PageResult<CourseBase> list(PageParams pageParams, @RequestBody(required = false) QueryCourseParamsDto queryCourseParamsDto) {
+        return courseBaseService.list(pageParams, queryCourseParamsDto);
+    }
+
+    @ApiOperation("新增课程基础信息")
+    @PostMapping("/course")
+    public CourseBaseInfoDto createCourseBase(@RequestBody AddCourseDto addCourseDto) {
+
+        Long companyId = 10101L;
+        CourseBaseInfoDto courseBaseInfoDto = courseBaseService.createCourseBase(companyId, addCourseDto);
+        return courseBaseInfoDto;
+
     }
 }

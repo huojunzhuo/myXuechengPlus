@@ -1,8 +1,10 @@
 package com.xuecheng.content.model.po;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,6 +19,7 @@ public class CourseBase implements Serializable {
     /**
      * 主键
      */
+    @TableId
     @ApiModelProperty(value ="主键",required = true )
     private Long id;
 
@@ -82,12 +85,12 @@ public class CourseBase implements Serializable {
     /**
      * 创建时间
      */
-    private Date createDate;
+    private LocalDateTime createDate;
     @ApiModelProperty("修改时间")
     /**
      * 修改时间
      */
-    private Date changeDate;
+    private LocalDateTime changeDate;
     @ApiModelProperty("创建人")
     /**
      * 创建人

@@ -7,14 +7,23 @@ import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 
+import com.xuecheng.content.mapper.CourseCategoryMapper;
+import com.xuecheng.content.mapper.CourseMarketMapper;
+import com.xuecheng.content.model.dto.AddCourseDto;
+import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
+import com.xuecheng.content.model.po.CourseMarket;
 import com.xuecheng.content.service.CourseBaseService;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -26,6 +35,57 @@ import java.util.List;
 public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseBase> implements CourseBaseService{
     @Autowired
     CourseBaseMapper courseBaseMapper;
+    @Autowired
+    CourseCategoryMapper courseCategoryMapper;
+    @Autowired
+    CourseMarketMapper courseMarketMapper;
+
+    /**
+     * @param companyId    教学机构id
+     * @param addCourseDto 课程基本信息
+     * @return com.xuecheng.content.model.dto.CourseBaseInfoDto
+     * @description 添加课程并返回课程相关信息
+     * @author Mr.M
+     * @date 2022/9/7 17:51
+     */
+    @Transactional
+    @Override
+    public CourseBaseInfoDto createCourseBase(Long companyId, AddCourseDto addCourseDto) {
+        //封装CourseBase对象用于存储课程基本信息数据库
+        CourseBase courseBase = new CourseBase();
+        BeanUtils.copyProperties(addCourseDto,courseBase);
+        courseBase.setCompanyId(companyId);
+        courseBase.setCreateDate(LocalDateTime.now());//后面修改
+        courseBase.setCreatePeople(null);//后面修改
+        courseBase.setAuditStatus("202002");//审核状态为未审核
+        courseBase.setStatus("203001");//发布状态为未发布
+        int insert = courseBaseMapper.insert(courseBase);
+        if (insert <=0){
+            throw new RuntimeException("保存课程基本信息失败");
+        }
+        //获取插入课程的id
+        Long id = courseBase.getId();
+        //封装CourseMarketd对象用于存储课程营销信息数据库
+        CourseMarket courseMarket = new CourseMarket();
+        BeanUtils.copyProperties(addCourseDto,courseMarket);
+        courseMarket.setId(id);
+        int insert2 = courseMarketMapper.insert(courseMarket);
+        if (insert2<=0){
+            throw new RuntimeException("保存课程营销信息失败");
+        }
+        CourseBase courseBaseSelect = courseBaseMapper.selectById(id);
+        CourseMarket courseMarketSelect = courseMarketMapper.selectById(id);
+        //创建返回数据的模型类
+        CourseBaseInfoDto courseBaseInfoDto = new CourseBaseInfoDto();
+        BeanUtils.copyProperties(courseBaseSelect,courseBaseInfoDto);//拷贝基本信息
+        BeanUtils.copyProperties(courseMarketSelect,courseBaseInfoDto);//拷贝营销信息
+        courseBaseInfoDto.setId(id);
+        courseBaseInfoDto.setCompanyId(companyId);
+        courseBaseInfoDto.setCompanyName(null);
+        courseBaseInfoDto.setMtName(courseCategoryMapper.selectById(courseBaseSelect.getMt()).getName());
+        courseBaseInfoDto.setStName(courseCategoryMapper.selectById(courseBaseSelect.getSt()).getName());
+        return courseBaseInfoDto;
+    }
 
     /**
      * 条件分页查询课程基本信息
