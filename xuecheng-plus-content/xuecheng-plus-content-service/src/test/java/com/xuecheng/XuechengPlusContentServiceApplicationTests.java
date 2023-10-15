@@ -11,11 +11,17 @@ import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseCategory;
 import com.xuecheng.content.service.CourseCategoryService;
+import com.xuecheng.testPo.Home;
+import com.xuecheng.testPo.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 class XuechengPlusContentServiceApplicationTests {
@@ -80,4 +86,5 @@ class XuechengPlusContentServiceApplicationTests {
         List<CourseCategoryTreeDto> courseCategoryTreeDtos = courseCategoryService.queryTreeNodes1("1");
         System.out.println(courseCategoryTreeDtos);
     }
+
 }

@@ -6,8 +6,10 @@ import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
+import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -35,4 +37,17 @@ public interface CourseBaseService extends IService<CourseBase> {
      */
     public CourseBaseInfoDto createCourseBase(Long companyId, AddCourseDto addCourseDto);
 
+    /**
+     * 查询课程基本信息
+     * @param courseId 课程id
+     * @return 课程基本信息模型类
+     */
+    public CourseBaseInfoDto getCourseBaseInfo(Long courseId);
+
+    /**
+     * 修改课程信息接口
+     * @param editCourseDto 修改课程信息模型类
+     * @return
+     */
+    public CourseBaseInfoDto updateCourseBase(Long companyId,EditCourseDto editCourseDto) ;
 }

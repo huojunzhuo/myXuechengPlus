@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Configuration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * 时间格式序列化配置类
+ */
 @Configuration
 public class LocalDateTimeConfig {
 

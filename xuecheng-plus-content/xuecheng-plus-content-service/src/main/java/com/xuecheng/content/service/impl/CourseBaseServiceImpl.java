@@ -3,6 +3,7 @@ package com.xuecheng.content.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.mapper.CourseBaseMapper;
@@ -11,8 +12,10 @@ import com.xuecheng.content.mapper.CourseCategoryMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
+import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
+import com.xuecheng.content.model.po.CourseCategory;
 import com.xuecheng.content.model.po.CourseMarket;
 import com.xuecheng.content.service.CourseBaseService;
 
@@ -39,6 +42,57 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
     CourseCategoryMapper courseCategoryMapper;
     @Autowired
     CourseMarketMapper courseMarketMapper;
+
+    /**
+     * 修改课程信息接口的实现类
+     * @param editCourseDto 修改课程信息模型类
+     * @return CourseBaseInfoDto 课程基本信息模型类
+     */
+    @Override
+    @Transactional
+    public CourseBaseInfoDto updateCourseBase(Long companyId,EditCourseDto editCourseDto) {
+        Long courseId = editCourseDto.getId();
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if(courseBase == null){
+            XueChengPlusException.cast("课程不存在");
+        }
+        if(!companyId.equals(courseBase.getCompanyId())){
+            XueChengPlusException.cast("只能编辑本机构的课程");
+        }
+        CourseMarket courseMarket = courseMarketMapper.selectById(courseId);
+        BeanUtils.copyProperties(editCourseDto,courseBase);
+        courseBase.setChangeDate(LocalDateTime.now());
+        BeanUtils.copyProperties(editCourseDto,courseMarket);
+        int i = courseBaseMapper.updateById(courseBase);
+        if(i<= 0){
+            XueChengPlusException.cast("课程基本信息更新失败");
+        }
+        int j = courseMarketMapper.updateById(courseMarket);
+        if(j<=0){
+            XueChengPlusException.cast("课程营销信息更新失败");
+        }
+        return this.getCourseBaseInfo(courseId);
+    }
+
+    /**
+     * 查询课程基本信息
+     * @param courseId 课程id
+     * @return 课程基本信息模型类
+     */
+    @Override
+    public CourseBaseInfoDto getCourseBaseInfo(Long courseId) {
+        CourseBaseInfoDto courseBaseInfoDto = new CourseBaseInfoDto();
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if(courseBase == null){
+            return null;
+        }
+        CourseMarket courseMarket = courseMarketMapper.selectById(courseId);
+        BeanUtils.copyProperties(courseBase,courseBaseInfoDto);
+        BeanUtils.copyProperties(courseMarket,courseBaseInfoDto);
+        courseBaseInfoDto.setMtName(courseCategoryMapper.selectById(courseBase.getMt()).getName());
+        courseBaseInfoDto.setStName(courseCategoryMapper.selectById(courseBase.getSt()).getName());
+        return courseBaseInfoDto;
+    }
 
     /**
      * @param companyId    教学机构id
