@@ -1,5 +1,7 @@
 package com.xuecheng;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.model.PageParams;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SpringBootTest
 class XuechengPlusContentServiceApplicationTests {
@@ -75,16 +78,56 @@ class XuechengPlusContentServiceApplicationTests {
     }
     @Autowired
     CourseCategoryService courseCategoryService;
+
+    /**
+     * 根据id查询树形结构(Mysql8.0递归查询)
+     */
     @Test
     public void testCourseCategoryService(){
         List<CourseCategoryTreeDto> courseCategoryTreeDtos = courseCategoryService.queryTreeNodes("1");
         System.out.println(courseCategoryTreeDtos);
     }
 
+    /**
+     * 根据id查询树形结构(Mysql8.0递归查询)-不同的service方法
+     */
     @Test
     public void testCourseCategoryService1(){
         List<CourseCategoryTreeDto> courseCategoryTreeDtos = courseCategoryService.queryTreeNodes1("1");
         System.out.println(courseCategoryTreeDtos);
+    }
+
+    //java递归查询树形结构代码
+    @Test
+    public void testTreeSelect(){
+        String id = "1";
+        List<CourseCategoryTreeDto> list = courseCategoryMapper.selectAllList();
+        List<CourseCategoryTreeDto> collectReturn = list.stream().filter(p -> p.getParentid().equals(id))
+                .peek(treeEntity -> treeEntity.setChildrenTreeNodes(this.buildTree(treeEntity,list)))
+                .collect(Collectors.toList());
+        String s = JSONUtil.toJsonStr(collectReturn);
+        System.out.println(s);
+    }
+    private List<CourseCategoryTreeDto> buildTree(CourseCategoryTreeDto treeEntity, List<CourseCategoryTreeDto> list) {
+        List<CourseCategoryTreeDto> collect = list.stream()
+                .filter(p -> p.getParentid().equals(treeEntity.getId()))
+                .peek(q -> q.setChildrenTreeNodes(buildTree(q, list)))
+                .collect(Collectors.toList());
+        return collect;
+    }
+    //测试java递归查询树形结构
+    @Test
+    public void testtestTreeSelect2(){
+        List<CourseCategoryTreeDto> courseCategoryTreeDtos = courseCategoryService.queryTreeNodes2("1");
+        String jsonStr = JSONUtil.toJsonStr(courseCategoryTreeDtos);
+        System.out.println(jsonStr);
+    }
+    //测试内连接查询封装属性数据
+    @Test
+    public void testInnerJoinSelect(){
+        List<CourseCategoryTreeDto> courseCategoryTreeDtos = courseCategoryMapper.selectTreeNodesByUnion();
+        String s = JSONUtil.toJsonStr(courseCategoryTreeDtos);
+        System.out.println(s);
     }
 
 }

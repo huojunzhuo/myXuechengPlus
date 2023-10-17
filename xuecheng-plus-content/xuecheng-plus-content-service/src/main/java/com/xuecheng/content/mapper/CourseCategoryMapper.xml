@@ -37,5 +37,49 @@
         from course_category
         where id = #{id};
     </select>
+    <select id="selectAllList" resultType="com.xuecheng.content.model.dto.CourseCategoryTreeDto" >
+        select *
+        from course_category
+    </select>
+
+<!--    数据映射-->
+    <resultMap id="treeNodeResultMap" type="com.xuecheng.content.model.dto.CourseCategoryTreeDto">
+        <!-- 一级数据映射 -->
+        <id column="t1_id" property="id"/>
+        <result column="t1_name" property="name"/>
+        <result column="t1_label" property="label"/>
+        <result column="t1_parentid" property="parentid"/>
+        <result column="t1_is_show" property="isShow"/>
+        <result column="t1_orderby" property="orderby"/>
+        <result column="t1_is_leaf" property="isLeaf"/>
+        <!-- 一级中包含多个二级数据 -->
+        <collection property="childrenTreeNodes" ofType="com.xuecheng.content.model.dto.CourseCategoryTreeDto">
+            <id column="t2_id" property="id"/>
+            <result column="t2_name" property="name"/>
+            <result column="t2_label" property="label"/>
+            <result column="t2_parentid" property="parentid"/>
+            <result column="t2_is_show" property="isShow"/>
+            <result column="t2_orderby" property="orderby"/>
+            <result column="t2_is_leaf" property="isLeaf"/>
+        </collection>
+    </resultMap>
+    <!-- 内连接查询-->
+    <select id="selectTreeNodesByUnion" resultMap="treeNodeResultMap">
+        select t1.id t1_id ,
+               t1.name t1_name,
+               t1.label t1_label,
+               t1.parentid t1_parentid,
+               t1.is_show t1_is_show,
+               t1.orderby t1_orderby,
+               t1.is_leaf t1_is_leaf,
+               t2.id t2_id ,
+               t2.name t2_name,
+               t2.label t2_label,
+               t2.parentid t2_parentid,
+               t2.is_show t2_is_show,
+               t2.orderby t2_orderby,
+               t2.is_leaf t2_is_leaf
+        from course_category t1 inner join course_category t2 on t1.id = t2.parentid ;
+    </select>
 
 </mapper>

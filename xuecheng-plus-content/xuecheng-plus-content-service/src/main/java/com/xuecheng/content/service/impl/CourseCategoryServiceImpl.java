@@ -98,6 +98,29 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
         }
         return categoryTreeDtos;
     }
+
+    /**
+     * java代码封装树形结构
+     * @param id
+     * @return
+     */
+    @Override
+    public List<CourseCategoryTreeDto> queryTreeNodes2(String id) {
+        List<CourseCategoryTreeDto> list = courseCategoryMapper.selectAllList();
+        List<CourseCategoryTreeDto> returnList = list.stream()
+                .filter(p -> p.getParentid().equals(id))
+                .peek(q -> q.setChildrenTreeNodes(this.buildTree(q, list)))
+                .collect(Collectors.toList());
+        return returnList;
+    }
+    //对每一个对象创建递归方法设置子节点
+    private List<CourseCategoryTreeDto> buildTree(CourseCategoryTreeDto q, List<CourseCategoryTreeDto> list) {
+        List<CourseCategoryTreeDto> collect = list.stream().filter(p -> p.getParentid().equals(q.getId()))
+                .peek(p -> p.setChildrenTreeNodes(buildTree(p, list)))
+                .collect(Collectors.toList());
+        return collect;
+    }
+
 }
 
 

@@ -14,12 +14,22 @@ import java.util.List;
 */
 public interface CourseCategoryService extends IService<CourseCategory> {
     /**
-     * 根据id查询树形结构
+     * 根据id查询树形结构(Mysql8.0递归查询)
      * @param id
      * @return
      */
     public List<CourseCategoryTreeDto> queryTreeNodes(String id);
 
-
+    /**
+     * 根据id查询树形结构(Mysql8.0递归查询)-不同的service方法
+     * @param id
+     * @return
+     */
     public List<CourseCategoryTreeDto> queryTreeNodes1(String id);
+    /**
+     * java代码封装树形结构
+     * @param id
+     * @return
+     */
+    public List<CourseCategoryTreeDto> queryTreeNodes2(String id);
 }
