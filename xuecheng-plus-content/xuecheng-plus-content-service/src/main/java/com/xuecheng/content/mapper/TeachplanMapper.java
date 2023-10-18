@@ -4,6 +4,7 @@ package com.xuecheng.content.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.model.po.Teachplan;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 * @createDate 2023-10-15 11:30:13
 * @Entity content.po.Teachplan
 */
+@Mapper
 public interface TeachplanMapper extends BaseMapper<Teachplan> {
 
     /**

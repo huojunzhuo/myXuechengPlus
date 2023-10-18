@@ -1,6 +1,7 @@
 package com.xuecheng.content.model.po;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.Data;
 
@@ -83,12 +84,12 @@ public class Teachplan implements Serializable {
     /**
      * 创建时间
      */
-    private Date createDate;
+    private LocalDateTime createDate;
 
     /**
      * 修改时间
      */
-    private Date changeDate;
+    private LocalDateTime changeDate;
 
     private static final long serialVersionUID = 1L;
 
