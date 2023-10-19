@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,28 @@ import java.util.stream.Collectors;
 public class MyTest {
     @Test
     public void testUser(){
+        List<User> userList = generatorList();
+//        Map<String, User> userMap = userList.stream().collect(Collectors.toMap(User::getId, account -> account, (key1, key2) -> key2));
+//        userMap.get("1").setName("Tom1");
+//        System.out.println(userMap.get("1").getName());
+//        System.out.println(userList.get(0).getName());
+//        userList.get(0).setName("Tom2");
+//        System.out.println(userMap.get("1").getName());
+//        System.out.println(userList.get(0).getName());
+
+//        ArrayList<User> users = userList;
+//        users.get(0).setName("Tom2");
+//        System.out.println(userMap.get("1").getName());
+//        System.out.println(userList.get(0).getName());
+        Map<String, User> mapTemp = userList.stream().collect(Collectors.toMap(User::getId, account -> account, (key1, key2) -> key2));
+        System.out.println(userList);
+        System.out.println(mapTemp);
+    }
+    @Test
+    public void testStream(){
+        List<User> users = generatorList();
+    }
+    private List<User> generatorList(){
         User user1 = new User();
         user1.setName("Tom");
         user1.setBirthday(LocalDateTime.of(1998,7,25,0,0));
@@ -45,21 +68,6 @@ public class MyTest {
         userList.add(user2);
         userList.add(user3);
 
-//        Map<String, User> userMap = userList.stream().collect(Collectors.toMap(User::getId, account -> account, (key1, key2) -> key2));
-//        userMap.get("1").setName("Tom1");
-//        System.out.println(userMap.get("1").getName());
-//        System.out.println(userList.get(0).getName());
-//        userList.get(0).setName("Tom2");
-//        System.out.println(userMap.get("1").getName());
-//        System.out.println(userList.get(0).getName());
-
-//        ArrayList<User> users = userList;
-//        users.get(0).setName("Tom2");
-//        System.out.println(userMap.get("1").getName());
-//        System.out.println(userList.get(0).getName());
-
-        Map<String, User> mapTemp = userList.stream().collect(Collectors.toMap(User::getId, account -> account, (key1, key2) -> key2));
-        System.out.println(userList);
-        System.out.println(mapTemp);
+        return userList;
     }
 }

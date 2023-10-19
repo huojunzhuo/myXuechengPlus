@@ -37,4 +37,17 @@ public interface TeachplanService extends IService<Teachplan> {
      */
     public boolean updateTeachplan(SaveTeachplanDto saveTeachplanDto);
 
+    /**
+     * 删除课程计划
+     * @return
+     */
+    public boolean deleteTeachPlan(Long id);
+
+
+    /**
+     * 向上移动课程计划
+     * @param id
+     * @return
+     */
+    public boolean moveUp(Long id);
 }
