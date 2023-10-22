@@ -19,6 +19,8 @@
     <modules>
         <module>xuecheng-plus-base</module>
         <module>xuecheng-plus-content</module>
+        <module>xuecheng-plus-gateway</module>
+        <module>xuecheng-plus-media</module>
 
     </modules>
 
@@ -70,12 +72,7 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
-        <!--mysql驱动-->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
+
         <!--mybatis-plus启动器-->
         <dependency>
             <groupId>com.baomidou</groupId>
