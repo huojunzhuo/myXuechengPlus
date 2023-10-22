@@ -43,6 +43,13 @@ public interface TeachplanService extends IService<Teachplan> {
      */
     public boolean deleteTeachPlan(Long id);
 
+    /**
+     * 根据课程id查询课程计划
+     * @param courseId 课程id
+     * @return
+     */
+    public List<Teachplan>  selectByCourseId(Long courseId);
+
 
     /**
      * 向上移动课程计划

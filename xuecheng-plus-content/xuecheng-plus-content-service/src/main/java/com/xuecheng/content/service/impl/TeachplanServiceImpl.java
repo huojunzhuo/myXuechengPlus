@@ -38,8 +38,18 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
     TeachplanMediaMapper teachplanMediaMapper;
 
     /**
+     * 根据课程id查询课程计划
+     * @param courseId 课程id
+     * @return
+     */
+    @Override
+    public List<Teachplan> selectByCourseId(Long courseId) {
+        List<Teachplan> teachplans = teachplanMapper.selectList(new LambdaQueryWrapper<Teachplan>().eq(Teachplan::getCourseId, courseId));
+        return teachplans;
+    }
+
+    /**
      * 查询课程计划
-     *
      * @param courseId
      * @return
      */
@@ -52,7 +62,6 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
 
     /**
      * 新增课程计划
-     *
      * @param saveTeachplanDto
      * @return 新增结果
      */
@@ -74,7 +83,6 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
 
     /**
      * 修改课程计划
-     *
      * @param saveTeachplanDto
      * @return
      */
@@ -97,7 +105,6 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
 
     /**
      * 获取最新的排序序号
-     *
      * @param teachplan
      * @param courseId
      * @return
@@ -112,7 +119,6 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
 
     /**
      * 删除课程计划
-     *
      * @return
      */
     @Transactional

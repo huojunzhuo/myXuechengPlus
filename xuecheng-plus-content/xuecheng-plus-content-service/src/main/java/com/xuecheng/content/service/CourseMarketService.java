@@ -11,4 +11,9 @@ import com.xuecheng.content.model.po.CourseMarket;
 */
 public interface CourseMarketService extends IService<CourseMarket> {
 
+    /**
+     *
+     * @return
+     */
+    public Boolean deleteCourseMarket(Long id);
 }

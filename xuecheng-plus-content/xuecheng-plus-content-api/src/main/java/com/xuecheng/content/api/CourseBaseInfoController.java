@@ -66,4 +66,15 @@ public class CourseBaseInfoController {
         return courseBaseInfoDto;
     }
 
+    @ApiOperation("删除课程全部信息")
+    @DeleteMapping("/course/{courseId}")
+    public String removeCourse(@PathVariable Long courseId){
+       Boolean b =  courseBaseService.removeCourse(courseId);
+       if(b){
+
+           return "删除课程成功";
+       }
+        return "删除课程失败";
+    }
+
 }

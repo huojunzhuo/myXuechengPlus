@@ -33,4 +33,11 @@ public interface CourseTeacherService extends IService<CourseTeacher> {
      * @return
      */
     boolean updateCourseTeacher(CourseTeacherDto courseTeacherDto);
+
+    /**
+     * 根据id删除教师
+     * @param id
+     * @return
+     */
+    public  boolean  deleteCourseTeacher(Long courseId,Integer id);
 }

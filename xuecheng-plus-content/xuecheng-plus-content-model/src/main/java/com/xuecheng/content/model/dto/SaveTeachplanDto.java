@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * ClassName: SaveTeachplanDto
@@ -21,8 +22,7 @@ import javax.validation.constraints.NotEmpty;
 public class SaveTeachplanDto {
 
     //分组校验；新增及修改课程计划
-    @NotEmpty(groups = {ValidationGroups.Inster.class},message = "新增课程计划时id不为空")
-    @NotEmpty(groups = {ValidationGroups.Update.class},message = "修改课程计划时id不为空")
+    @NotNull(groups = {ValidationGroups.Update.class},message = "修改课程计划时id不为空")
     @ApiModelProperty(value = "教学计划id")
     /***
      * 教学计划id
@@ -35,13 +35,13 @@ public class SaveTeachplanDto {
      */
     private String pname;
 
-    @NotEmpty(message = "章节不为空")
+    @NotNull(message = "章节不为空")
     @ApiModelProperty(value = "课程计划父级Id", required = true)
     /**
      * 课程计划父级Id
      */
     private Long parentid;
-    @NotEmpty(message = "层级不为空")
+    @NotNull(message = "层级不为空")
     @ApiModelProperty(value = "层级，分为1、2、3级", required = true)
     /**
      * 层级，分为1、2、3级
@@ -53,10 +53,10 @@ public class SaveTeachplanDto {
      * 课程类型:1视频、2文档
      */
     private String mediaType;
-    @NotEmpty(message = "课程标识不为空")
+    @NotNull(message = "课程标识不为空")
     @ApiModelProperty(value = "课程标识")
     /**
-     * 课程标识
+     * 课程id
      */
     private Long courseId;
     @ApiModelProperty(value = "课程发布标识")

@@ -28,23 +28,34 @@ public class CourseTeacherController {
     CourseTeacherService courseTeacherService;
 
     @ApiOperation("教师列表查询")
-    @GetMapping("/courseTeacher/list/{courseId}")
-    public List<CourseTeacher> findCourseTeacher(@PathVariable Long courseId){
+    @GetMapping(" /{courseId}")
+    public List<CourseTeacher> findCourseTeacher(@PathVariable Long courseId) {
         return courseTeacherService.findCourseTeacher(courseId);
     }
 
     @ApiOperation("新增或者修改教师")
     @PostMapping("/courseTeacher")
-    public String saveCourseTeacher(@RequestBody CourseTeacherDto courseTeacherDto){
+    public String saveCourseTeacher(@RequestBody CourseTeacherDto courseTeacherDto) {
 
         Long id = courseTeacherDto.getId();
-        if(ObjectUtil.isNull(id)){
+        if (ObjectUtil.isNull(id)) {
             //走新增逻辑
             boolean isTrue = courseTeacherService.saveCourseTeacher(courseTeacherDto);
-            return isTrue? "新增success":"新增fail";
+            return isTrue ? "新增success" : "新增fail";
         }
         //走修改逻辑
         boolean isTrue = courseTeacherService.updateCourseTeacher(courseTeacherDto);
-        return isTrue? "修改success":"修改fail";
+        return isTrue ? "修改success" : "修改fail";
     }
+
+    @ApiOperation("删除教师")
+    @DeleteMapping("/courseTeacher/{courseId}/{id}")
+    public String deleteCourseTeacher(@PathVariable Long courseId, @PathVariable Integer id) {
+        Boolean b = courseTeacherService.deleteCourseTeacher(courseId, id);
+        if (b) {
+            return "删除成功";
+        }
+        return "删除失败";
+    }
+
 }
