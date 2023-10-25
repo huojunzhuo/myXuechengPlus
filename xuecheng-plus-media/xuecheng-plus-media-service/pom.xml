@@ -10,10 +10,17 @@
     <artifactId>xuecheng-plus-media-service</artifactId>
 
     <dependencies>
+        <!-- minio-->
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
         </dependency>
+        <!-- minio配套-->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+        </dependency>
+        <!--依赖model工程-->
         <dependency>
             <groupId>com.xuecheng</groupId>
             <artifactId>xuecheng-plus-media-model</artifactId>
