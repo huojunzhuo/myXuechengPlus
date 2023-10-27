@@ -20,6 +20,10 @@ spring:
   mvc: #因为Springfox 使用的路径匹配是基于AntPathMatcher的，而Spring Boot 2.6.X使用的是PathPatternMatcher
     pathmatch:
       matching-strategy: ant_path_matcher
+  servlet: #设置spring上传文件打大小限制
+    multipart:
+      max-file-size: 50MB #单个文件的大小限制
+      max-request-size: 50MB #单次请求的大小限制
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
