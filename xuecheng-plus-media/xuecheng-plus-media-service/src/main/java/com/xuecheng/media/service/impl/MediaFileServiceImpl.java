@@ -12,10 +12,12 @@ import com.xuecheng.base.model.PageResult;
 import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.media.config.MinioConfig;
 import com.xuecheng.media.mapper.MediaFilesMapper;
+import com.xuecheng.media.mapper.MediaProcessMapper;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
+import com.xuecheng.media.model.po.MediaProcess;
 import com.xuecheng.media.service.MediaFileService;
 import io.minio.*;
 import io.minio.messages.DeleteError;
@@ -23,7 +25,7 @@ import io.minio.messages.DeleteObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -139,6 +141,7 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
 
     /**
      * 清除分块文件
+     *
      * @param chunkFileFolderPath 分块文件路径
      * @param chunkTotal          分块文件总数
      */
@@ -167,13 +170,13 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
                 }
             });
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            log.error("清除分块文件失败,chunkFileFolderPath:{}",chunkFileFolderPath,e);
+            log.error("清除分块文件失败,chunkFileFolderPath:{}", chunkFileFolderPath, e);
         }
     }
 
-
+    @Override
     /**
      * 从minio下载文件
      * @param bucket     桶
@@ -216,6 +219,7 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
 
     /**
      * 根据md5获取合并文件的地址
+     *
      * @param fileMd5
      * @param extension
      * @return
@@ -414,11 +418,38 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
                 log.error("保存文件到数据库失败:{}", mediaFile.toString());
                 XueChengPlusException.cast("保存文件到数据库失败");
             }
+            //添加到待处理任务表
+            addWaitingTask(mediaFile);
             log.debug("保存文件到数据库成功", mediaFile.toString());
             return mediaFile;
         }
         XueChengPlusException.cast("文件已存在");
         return mediaFile;
+    }
+
+    @Autowired
+    MediaProcessMapper mediaProcessMapper;
+
+    /**
+     * 添加待处理的任务
+     *
+     * @param mediafile 媒资文件信息
+     */
+    private void addWaitingTask(MediaFiles mediafile) {
+        String filename = mediafile.getFilename();
+        //获取扩展名
+        String extension = filename.substring(filename.lastIndexOf("."));
+        //获取文件类型
+        String mimeType = getMimeType(extension);
+        //如果是avi视频则添加到待处理表
+        if (StringUtils.equals(mimeType, "video/x-msvideo")) {
+            MediaProcess mediaProcess = new MediaProcess();
+            BeanUtil.copyProperties(mediafile, mediaProcess);
+            mediaProcess.setStatus("1");//未做处理
+            mediaProcess.setFailCount(0);//失败次数默认为0
+            mediaProcessMapper.insert(mediaProcess);
+        }
+
     }
 
     //私有方法：生成文件的存储路径:年/月/日
@@ -465,6 +496,7 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
      * @param objectName    对象名称
      * @return 是否上传成功
      */
+    @Override
     public Boolean addMediaFilesToMinIO(String localFilePath, String mimeType, String bucket, String objectName) {
         try {
             UploadObjectArgs uploadObjectArgs = UploadObjectArgs.builder()
