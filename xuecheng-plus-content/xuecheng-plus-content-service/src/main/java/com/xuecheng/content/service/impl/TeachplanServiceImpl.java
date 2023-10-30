@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.content.mapper.TeachplanMapper;
 import com.xuecheng.content.mapper.TeachplanMediaMapper;
+import com.xuecheng.content.model.dto.BindTeachplanMediaDto;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.model.po.Teachplan;
@@ -36,6 +37,63 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
     TeachplanMapper teachplanMapper;
     @Autowired
     TeachplanMediaMapper teachplanMediaMapper;
+
+    /**
+     * 删除课程计划绑定媒资
+     * @param teachPlanId 课程计划id
+     * @param mediaId     媒资文件id
+     * @return
+     */
+    @Override
+    public int deleteAssociationMedia(Long teachPlanId, String mediaId) {
+        LambdaQueryWrapper<TeachplanMedia> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(TeachplanMedia::getTeachplanId,teachPlanId).eq(TeachplanMedia::getMediaId,mediaId);
+        TeachplanMedia teachplanMedia = teachplanMediaMapper.selectOne(queryWrapper);
+        if (teachplanMedia == null) {
+            XueChengPlusException.cast("所删除的课程计划和媒资关联关系不存在");
+        }
+        int delete = teachplanMediaMapper.delete(queryWrapper);
+        return delete;
+    }
+
+    /**
+     * 教学计划绑定媒资
+     * @param bindTeachplanMediaDto 教学计划绑定媒资，模型类
+     */
+    @Transactional
+    @Override
+    public TeachplanMedia associationMedia(BindTeachplanMediaDto bindTeachplanMediaDto) {
+        //判断一级计划不可以绑定
+        Long teachplanId = bindTeachplanMediaDto.getTeachplanId();
+        Teachplan teachplan = teachplanMapper.selectById(teachplanId);
+        if (teachplan == null) {
+            XueChengPlusException.cast("课程计划不存在" );
+        }
+        if (!ObjectUtil.equal(teachplan.getGrade(),2)){
+            //如果计划等级为不是2级，则不允许绑定
+            XueChengPlusException.cast("所选课程计划等级为一级，请关联子节点");
+        }
+        //实现场景：可以关联多个视频。如果只能关联一个则要删除原绑定关系，再新增；
+        LambdaQueryWrapper<TeachplanMedia> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(TeachplanMedia::getMediaId,bindTeachplanMediaDto.getMediaId())
+                .eq(TeachplanMedia::getTeachplanId,bindTeachplanMediaDto.getTeachplanId())
+                .eq(TeachplanMedia::getCourseId,bindTeachplanMediaDto.getCourseId());
+        TeachplanMedia teachplanMedia = teachplanMediaMapper.selectOne(queryWrapper);
+        if (BeanUtil.isNotEmpty(teachplanMedia)){
+            log.debug("绑定关系已存在,teachplanMedia:{}",teachplanMedia);
+            XueChengPlusException.cast("绑定关系已存在请勿重复绑定");
+        }
+        //如果不存在则新建
+        teachplanMedia = new TeachplanMedia();
+        BeanUtil.copyProperties(bindTeachplanMediaDto,teachplanMedia);
+        teachplanMedia.setCreateDate(LocalDateTime.now());
+        int insert = teachplanMediaMapper.insert(teachplanMedia);
+        if (insert<= 0){
+            log.debug("插入关联关系表失败,teachplanMedia:{}",teachplanMedia);
+            XueChengPlusException.cast("插入关联关系表失败");
+        }
+        return teachplanMedia;
+    }
 
     /**
      * 根据课程id查询课程计划

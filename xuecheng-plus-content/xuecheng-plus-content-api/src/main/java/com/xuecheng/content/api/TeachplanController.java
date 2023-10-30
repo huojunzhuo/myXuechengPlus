@@ -1,9 +1,14 @@
 package com.xuecheng.content.api;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.xuecheng.base.exception.XueChengPlusException;
+import com.xuecheng.base.model.RestResponse;
+import com.xuecheng.content.model.dto.BindTeachplanMediaDto;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
+import com.xuecheng.content.model.po.TeachplanMedia;
+import com.xuecheng.content.service.TeachplanMediaService;
 import com.xuecheng.content.service.TeachplanService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -27,6 +32,26 @@ public class TeachplanController {
 
     @Autowired
     TeachplanService teachplanService;
+
+    @ApiOperation("删除课程计划和媒资绑定关系")
+    @DeleteMapping("/teachplan/association/media/{teachPlanId}/{mediaId}")
+    public RestResponse deleteAssociationMedia(@PathVariable Long teachPlanId,@PathVariable String mediaId){
+        int i = teachplanService.deleteAssociationMedia(teachPlanId, mediaId);
+        if (i <= 0 ) {
+            return RestResponse.validfail("删除课程计划和媒资绑定关系失败");
+        }
+        return RestResponse.success();
+    }
+
+    @ApiOperation("课程计划和媒资信息绑定")
+    @PostMapping("/teachplan/association/media")
+    public RestResponse<TeachplanMedia> associationMedia(@RequestBody BindTeachplanMediaDto bindTeachplanMediaDto){
+        TeachplanMedia teachplanMedia = teachplanService.associationMedia(bindTeachplanMediaDto);
+        if (BeanUtil.isEmpty(teachplanMedia)){
+            return RestResponse.validfail("绑定失败");
+        }
+        return RestResponse.success(teachplanMedia);
+    }
 
     @ApiOperation("查询课程计划树形结构")
     @ApiImplicitParam(value = "courseId", name = "课程Id", required = true, dataType = "Long", paramType = "path")
@@ -52,7 +77,6 @@ public class TeachplanController {
         if (!b) {
             XueChengPlusException.cast("修改课程计划失败");
         }
-
     }
 
     @ApiOperation("课程计划删除")

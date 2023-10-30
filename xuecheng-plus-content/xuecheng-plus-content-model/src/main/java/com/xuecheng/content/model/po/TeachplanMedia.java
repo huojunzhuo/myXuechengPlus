@@ -1,6 +1,7 @@
 package com.xuecheng.content.model.po;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.Data;
 
@@ -38,7 +39,7 @@ public class TeachplanMedia implements Serializable {
     /**
      * 
      */
-    private Date createDate;
+    private LocalDateTime createDate;
 
     /**
      * 创建人
