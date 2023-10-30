@@ -137,7 +137,6 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
 
     /**
      * 查询课程基本信息
-     *
      * @param courseId 课程id
      * @return 课程基本信息模型类
      */

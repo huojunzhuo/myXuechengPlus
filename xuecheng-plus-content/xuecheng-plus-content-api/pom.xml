@@ -12,6 +12,12 @@
     </parent>
 
     <dependencies>
+        <!-- Spring Boot 对结果视图 Freemarker 集成 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+        
         <!--依赖service工程-->
         <dependency>
             <groupId>com.xuecheng</groupId>

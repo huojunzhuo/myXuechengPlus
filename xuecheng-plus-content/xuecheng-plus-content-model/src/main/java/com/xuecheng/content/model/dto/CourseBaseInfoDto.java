@@ -1,19 +1,21 @@
 package com.xuecheng.content.model.dto;
 
 import com.xuecheng.content.model.po.CourseBase;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
  * ClassName: CourseBaseInfoDto
  * Package: com.xuecheng.content.model.dto
- * Description:课程基本信息
+ * Description:课程基本信息、营销信息模型类
  *
  * @Author huojz
  * @Create 2023/10/12 19:33
  * @Version 1.0
  */
 @Data
+@ApiModel(value = "课程基本信息、营销信息模型类",description = "课程基本信息、营销信息模型类")
 public class CourseBaseInfoDto extends CourseBase {
     /**
      * 收费规则，对应数据字典

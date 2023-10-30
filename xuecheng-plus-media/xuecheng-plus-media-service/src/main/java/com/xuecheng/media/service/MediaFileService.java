@@ -98,7 +98,7 @@ public interface MediaFileService extends IService<MediaFiles> {
      * @param objectName    对象名称
      * @return 是否上传成功
      */
-    public Boolean addMediaFilesToMinIO(String localFilePath, String mimeType, String bucket, String objectName)
+    public Boolean addMediaFilesToMinIO(String localFilePath, String mimeType, String bucket, String objectName);
 
 
 
