@@ -1,6 +1,8 @@
 package com.xuecheng.content.service;
 
 import com.xuecheng.content.model.dto.CoursePreviewDto;
+import io.swagger.annotations.ApiParam;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * ClassName: CoursePublishService
@@ -18,4 +20,11 @@ public interface CoursePublishService {
      * @return com.xuecheng.content.model.dto.CoursePreviewDto
      */
     public CoursePreviewDto getCoursePreviewInfo(Long courseId);
+
+    /**
+     * @description 课程提交审核
+     * @param courseId  课程id
+     * @return void
+     */
+    public void commitAudit(Long companyId , Long courseId);
 }

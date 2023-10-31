@@ -38,7 +38,7 @@ public interface CourseBaseService extends IService<CourseBase> {
     public CourseBaseInfoDto createCourseBase(Long companyId, AddCourseDto addCourseDto);
 
     /**
-     * 查询课程基本信息
+     * 查询课程基本信息、营销信息，返回页面模型类
      * @param courseId 课程id
      * @return 课程基本信息模型类
      */

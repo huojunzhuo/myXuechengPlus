@@ -105,7 +105,6 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
 
     /**
      * 修改课程信息接口的实现类
-     *
      * @param editCourseDto 修改课程信息模型类
      * @return CourseBaseInfoDto 课程基本信息模型类
      */
@@ -121,6 +120,7 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
             XueChengPlusException.cast("只能编辑本机构的课程");
         }
         CourseMarket courseMarket = courseMarketMapper.selectById(courseId);
+
         BeanUtils.copyProperties(editCourseDto, courseBase);
         courseBase.setChangeDate(LocalDateTime.now());
         BeanUtils.copyProperties(editCourseDto, courseMarket);
@@ -136,7 +136,7 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
     }
 
     /**
-     * 查询课程基本信息
+     * 查询课程基本信息、营销信息，返回页面模型类
      * @param courseId 课程id
      * @return 课程基本信息模型类
      */
@@ -148,6 +148,9 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
             return null;
         }
         CourseMarket courseMarket = courseMarketMapper.selectById(courseId);
+        if (ObjectUtil.isEmpty(courseMarket)){
+            XueChengPlusException.cast("课程营销信息查询失败");
+        }
         BeanUtils.copyProperties(courseBase, courseBaseInfoDto);
         BeanUtils.copyProperties(courseMarket, courseBaseInfoDto);
         courseBaseInfoDto.setMtName(courseCategoryMapper.selectById(courseBase.getMt()).getName());
