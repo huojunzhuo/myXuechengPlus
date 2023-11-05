@@ -66,6 +66,12 @@
             <artifactId>spring-web</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.4</version>
+        </dependency>
+
         <!--JSR303校验-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

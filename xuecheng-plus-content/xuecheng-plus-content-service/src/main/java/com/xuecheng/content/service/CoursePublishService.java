@@ -14,6 +14,13 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @Version 1.0
  */
 public interface CoursePublishService {
+
+    /**
+     * 课程发布接口
+     * @param companyId 机构id
+     * @param courseId 课程id
+     */
+    public void publish(Long companyId,Long courseId);
     /**
      * 获取课程预览信息
      * @param courseId 课程id

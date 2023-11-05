@@ -21,6 +21,7 @@
         <module>xuecheng-plus-content</module>
         <module>xuecheng-plus-gateway</module>
         <module>xuecheng-plus-media</module>
+        <module>xuecheng-plus-message-sdk</module>
 
     </modules>
 

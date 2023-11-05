@@ -28,6 +28,22 @@ public class CoursePublishController {
 
     @Autowired
     CoursePublishService coursePublishService;
+    @ApiOperation("课程发布接口")
+    @PostMapping("/coursepublish/{courseId}")
+    @ResponseBody
+    public void coursepublish(@PathVariable("courseId") Long courseId){
+        Long companyId = 1232141425L;
+        coursePublishService.publish(1232141425L,courseId);
+    }
+
+
+    @ResponseBody
+    @ApiOperation("课程提交审核接口")
+    @PostMapping("/courseaudit/commit/{courseId}")
+    public void commitAudit(@PathVariable("courseId") @ApiParam(value = "课程id",required = true) Long courseId){
+        Long companyId = 1232141425L;
+        coursePublishService.commitAudit(companyId,courseId);
+    }
 
     @ApiOperation("课程发布预览返回接口")
     @GetMapping("/coursepreview/{courseId}")
@@ -39,12 +55,6 @@ public class CoursePublishController {
         modelAndView.setViewName("course_template");
         return modelAndView;
     }
-    @ResponseBody
-    @ApiOperation("课程提交审核接口")
-    @PostMapping("/courseaudit/commit/{courseId}")
-    public void commitAudit(@PathVariable("courseId") @ApiParam(value = "课程id",required = true) Long courseId){
-        Long companyId = 1232141425L;
-        coursePublishService.commitAudit(companyId,courseId);
-    }
+
 
 }
