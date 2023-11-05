@@ -7,6 +7,8 @@ import com.xuecheng.base.exception.CommonError;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.utils.JsonUtil;
 import com.xuecheng.base.utils.StringUtil;
+import com.xuecheng.content.config.MultipartSupportConfig;
+import com.xuecheng.content.feignclient.MediaServiceClient;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.mapper.CoursePublishMapper;
@@ -21,12 +23,23 @@ import com.xuecheng.content.service.CourseTeacherService;
 import com.xuecheng.content.service.TeachplanService;
 import com.xuecheng.messagesdk.model.po.MqMessage;
 import com.xuecheng.messagesdk.service.MqMessageService;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ClassName: CoursePublishServiceImpl
@@ -38,6 +51,7 @@ import java.util.List;
  * @Version 1.0
  */
 @Service
+@Slf4j
 public class CoursePublishServiceImpl implements CoursePublishService {
 
     @Autowired
@@ -56,8 +70,73 @@ public class CoursePublishServiceImpl implements CoursePublishService {
     private CoursePublishMapper coursePublishMapper;
 
     /**
+     * @param courseId 课程id
+     * @return File 静态化文件
+     * @description 课程静态化
+     * @author Mr.M
+     * @date 2022/9/23 16:59
+     */
+    @Override
+    public File generateCourseHtml(Long courseId) {
+
+        File htmlfile = null;
+        try {
+            //配置freemarker
+            Configuration configuration = new Configuration(Configuration.getVersion());
+            //加载模板
+            //选指定模板路径,classpath下templates下
+            //得到classpath路径
+            String classpath = this.getClass().getResource("/").getPath();
+            configuration.setClassForTemplateLoading(this.getClass(), "/templates/");
+            // configuration.setDirectoryForTemplateLoading(new File(classpath + "/templates/"));
+            //设置字符编码
+            configuration.setDefaultEncoding("utf-8");
+            //指定模板文件名称
+            Template template = configuration.getTemplate("course_template.ftl");
+            //准备数据
+            CoursePreviewDto coursePreviewInfo = this.getCoursePreviewInfo(courseId);
+            Map<String, Object> map = new HashMap<>();
+            map.put("model", coursePreviewInfo);
+            //静态化
+            //参数1：模板，参数2：数据模型
+            String content = FreeMarkerTemplateUtils.processTemplateIntoString(template, map);
+            System.out.println(content);
+            //将静态化内容输出到文件中
+            InputStream inputStream = IOUtils.toInputStream(content);
+            //创建静态化文件
+            htmlfile = File.createTempFile("course", ".html");
+            //输出流
+            FileOutputStream outputStream = new FileOutputStream(htmlfile);
+            IOUtils.copy(inputStream, outputStream);
+        } catch (Exception e) {
+            log.error("课程静态化异常:{}", e.toString());
+            XueChengPlusException.cast("课程静态化异常");
+        }
+        return htmlfile;
+    }
+    @Autowired
+    MediaServiceClient mediaServiceClient;
+    /**
+     * @param courseId
+     * @param file     静态化文件
+     * @return void
+     * @description 上传课程静态化页面
+     * @author Mr.M
+     * @date 2022/9/23 16:59
+     */
+    @Override
+    public void uploadCourseHtml(Long courseId, File file) {
+        //调用配置类获取MultipartFile类型文件
+        MultipartFile multipartFile = MultipartSupportConfig.getMultipartFile(file);
+        //远程调用媒资服务接口上传文件
+        String course = mediaServiceClient.uploadFile(multipartFile, "course/" + courseId + ".html");
+        if(course == null){
+            XueChengPlusException.cast("上传文件异常");
+        }
+    }
+
+    /**
      * 课程发布接口实现方法
-     *
      * @param companyId 机构id
      * @param courseId  课程id
      */
@@ -88,26 +167,27 @@ public class CoursePublishServiceImpl implements CoursePublishService {
 
     /**
      * 保存课程发布信息到发布表私有方法
+     *
      * @param courseId 课程id
      */
-    private void saveCoursePublish(Long courseId){
+    private void saveCoursePublish(Long courseId) {
         // 1.查询课程预发布表
         CoursePublishPre coursePublishPre = coursePublishPreMapper.selectById(courseId);
         if (coursePublishPre == null) {
             XueChengPlusException.cast("请先提交审核再发布");
         }
         // 2.查询课程发布表
-        CoursePublish  coursePublish = coursePublishMapper.selectById(courseId);
+        CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
         if (coursePublish == null) {
             coursePublish = new CoursePublish();
-            BeanUtil.copyProperties(coursePublishPre,coursePublish);
+            BeanUtil.copyProperties(coursePublishPre, coursePublish);
             coursePublish.setStatus("203002");
             // 3.如果没有记录则插入课程发布表
             int insert = coursePublishMapper.insert(coursePublish);
             if (insert <= 0) {
                 XueChengPlusException.cast("保存课程发布信息失败");
             }
-        }else {
+        } else {
             //如果有记录则更新
             coursePublishMapper.updateById(coursePublish);
         }
@@ -123,11 +203,13 @@ public class CoursePublishServiceImpl implements CoursePublishService {
 
     @Autowired
     MqMessageService mqMessageService;
+
     /**
      * 向消息表中存储记录
+     *
      * @param courseId 课程id
      */
-    private  void  saveCoursePublishMessage(Long courseId){
+    private void saveCoursePublishMessage(Long courseId) {
         MqMessage mqMessage = mqMessageService.addMessage("course_publish", String.valueOf(courseId), null, null);
         if (mqMessage == null) {
             XueChengPlusException.cast(CommonError.UNKOWN_ERROR);
@@ -205,7 +287,6 @@ public class CoursePublishServiceImpl implements CoursePublishService {
 
     /**
      * 获取课程预览信息
-     *
      * @param courseId 课程id
      * @return com.xuecheng.content.model.dto.CoursePreviewDto
      */

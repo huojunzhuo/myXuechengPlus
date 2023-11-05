@@ -12,11 +12,14 @@ spring:
     url: jdbc:mysql://localhost:3306/xc402_media?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: abc123
+#  cloud:
+#    nacos:
+#      config:
+#        import-check:
+#          enabled: false
   cloud:
     nacos:
-      config:
-        import-check:
-          enabled: false
+      server-addr: 127.0.0.1 # nacos地址
   mvc: #因为Springfox 使用的路径匹配是基于AntPathMatcher的，而Spring Boot 2.6.X使用的是PathPatternMatcher
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -52,7 +55,7 @@ xxl:
       appname: media-process-service
       address:
       ip:
-      port: 9999
+      port: 9998
       logpath: /data/applogs/xxl-job/jobhandler
       logretentiondays: 30
     accessToken: default_token

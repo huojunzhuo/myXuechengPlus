@@ -27,7 +27,7 @@ public interface MediaFileService extends IService<MediaFiles> {
      * @param localFilePath 本地文件路径
      * @return 上传文件返回结果的模型类
      */
-    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
+    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath,String objectName);
 
     /**
      * 从minio下载文件

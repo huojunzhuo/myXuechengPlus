@@ -1,13 +1,16 @@
 package com.xuecheng.content.service.jobhandler;
 
+import com.xuecheng.content.service.CoursePublishService;
 import com.xuecheng.messagesdk.model.po.MqMessage;
 import com.xuecheng.messagesdk.service.MessageProcessAbstract;
 import com.xuecheng.messagesdk.service.MqMessageService;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class CoursePublishTask extends MessageProcessAbstract {
 
     //任务调度入口
-//    @XxlJob("CoursePublishJobHandler")
+    @XxlJob("CoursePublishJobHandler")
     public void coursePublishJobHandler(){
         // 分片参数
         int shardIndex = XxlJobHelper.getShardIndex();
@@ -34,7 +37,7 @@ public class CoursePublishTask extends MessageProcessAbstract {
     }
 
     /**
-     * 发布课程任务
+     * 主执行方法：发布课程任务
      * @param mqMessage 执行任务内容
      * @return
      */
@@ -42,7 +45,7 @@ public class CoursePublishTask extends MessageProcessAbstract {
     public boolean execute(MqMessage mqMessage) {
         String businessKey1  = mqMessage.getBusinessKey1();
         long courseId = Long.parseLong(businessKey1);
-        //课程静态化
+        //课程静态化：生成静态页面，上传至mino
         generateCourseHtml(mqMessage,courseId);
         //课程索引
         saveCourseIndex(mqMessage,courseId);
@@ -50,6 +53,8 @@ public class CoursePublishTask extends MessageProcessAbstract {
         saveCourseCache(mqMessage,courseId);
         return false;
     }
+    @Autowired
+    CoursePublishService coursePublishService;
 
     /**
      * 生成课程静态化页面并上传至文件系统
@@ -69,15 +74,14 @@ public class CoursePublishTask extends MessageProcessAbstract {
             log.debug("课程静态化已处理直接返回，课程id:{}",courseId);
             return;
         }
-        //执行课程静态化的代码
-        try {
-            TimeUnit.SECONDS.sleep(10);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        //生成静态化课程页面
+        File file = coursePublishService.generateCourseHtml(courseId);
+        if(file != null){
+            //上传课程静态化页面到minio
+            coursePublishService.uploadCourseHtml(courseId,file);
         }
         //保存第一阶段状态为完成
         mqMessageService.completedStageOne(id);
-
     }
 
     /**

@@ -10,6 +10,7 @@ import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.base.model.RestResponse;
+import com.xuecheng.base.utils.StringUtil;
 import com.xuecheng.media.config.MinioConfig;
 import com.xuecheng.media.mapper.MediaFilesMapper;
 import com.xuecheng.media.mapper.MediaProcessMapper;
@@ -351,7 +352,7 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
      * @param localFilePath       本地文件路径
      * @return 上传文件返回结果的模型类
      */
-    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath) {
+    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath,String objectName) {
         File file = new File(localFilePath);
         if (!file.exists()) {
             //如果文件不存在
@@ -368,7 +369,9 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
         //私有方法获取文件的默认目录（年/月/日+/）
         String defaultFolderPath = getDefaultFolderPath();
         //存储到minio中的对象名(带目录)
-        String objectName = defaultFolderPath + fileMd5 + extension;
+        if(StringUtil.isEmpty(objectName)){
+            objectName = defaultFolderPath + fileMd5 + extension;
+        }
         String fileType = uploadFileParamsDto.getFileType();
         String bucket = null;
         if ("001001".equals(fileType)) {
@@ -432,7 +435,6 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
 
     /**
      * 添加待处理的任务
-     *
      * @param mediafile 媒资文件信息
      */
     private void addWaitingTask(MediaFiles mediafile) {
