@@ -1,0 +1,49 @@
+server:
+  servlet:
+    context-path: /auth
+  port: 63070
+spring:
+  application:
+    name: auth-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/xc402_users?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: abc123
+  profiles:
+    active: dev
+  main:
+    allow-circular-references: true
+
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      discovery:
+        namespace: dev402
+        group: xuecheng-plus-project
+      config:
+        import-check:
+          enabled: false #确认从2021.0.5版本起，Spring Cloud将不再默认启用bootstrap 包，所以针对该问题，解决方案有
+#      config:
+#        namespace: dev402
+#        group: xuecheng-plus-project
+#        file-extension: yaml
+#        refresh-enabled: true
+#        shared-configs:
+#          - data-id: swagger-${spring.profiles.active}.yaml
+#            group: xuecheng-plus-common
+#            refresh: true
+#          - data-id: logging-${spring.profiles.active}.yaml
+#            group: xuecheng-plus-common
+#            refresh: true
+logging:
+  config: classpath:log4j2-dev.xml
+  level:
+    root: info
+
+swagger:
+  title: "认证服务系统"
+  description: "认证服务系统"
+  base-package: com.xuecheng.auth
+  enabled: true
+  version: 1.0.0
