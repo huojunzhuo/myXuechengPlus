@@ -4,6 +4,13 @@ spring:
     name: gateway
   profiles:
     active: dev
+  cloud:
+    nacos:
+     config:
+      import-check:
+       enabled: false
+  main:
+    allow-circular-references: true
 server:
   port: 63010 # 网关端口
   cloud:

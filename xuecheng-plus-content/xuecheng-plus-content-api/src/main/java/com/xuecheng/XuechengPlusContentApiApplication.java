@@ -8,7 +8,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 
 @SpringBootApplication
-@EnableSwagger2Doc //开启swagger
+@EnableWebMvc
+//@EnableSwagger2Doc //开启swagger
 @EnableFeignClients(basePackages = {"com.xuecheng.content.feignclient"})
 public class XuechengPlusContentApiApplication {
 

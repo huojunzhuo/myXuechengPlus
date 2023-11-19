@@ -3,6 +3,7 @@ package com.xuecheng.content.api;
 import com.xuecheng.base.exception.ValidationGroups;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
+import com.xuecheng.base.utils.SecurityUtil;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.EditCourseDto;
@@ -13,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +56,10 @@ public class CourseBaseInfoController {
     @ApiOperation("查询课程基础信息")
     @GetMapping("/course/{courseId}")
     public CourseBaseInfoDto getCourseBaseById(@PathVariable Long courseId) {
+        //取出用户身份
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        System.out.println("user = " + user);
+
         CourseBaseInfoDto courseBaseInfo = courseBaseService.getCourseBaseInfo(courseId);
         return courseBaseInfo;
     }

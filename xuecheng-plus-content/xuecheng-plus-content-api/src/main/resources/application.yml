@@ -5,6 +5,7 @@ server:
 spring:
   main:
     allow-bean-definition-overriding: true #解决不能重复定义media-api服务名
+    allow-circular-references: true #解决循环依赖报错
   application:
     name: content-api
   cloud:

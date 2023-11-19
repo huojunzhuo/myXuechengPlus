@@ -25,29 +25,49 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    DaoAuthenticationProviderCustom daoAuthenticationProviderCustom;
 
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-    //配置用户信息服务
-    @Bean
-    public UserDetailsService userDetailsService() {
-        //这里配置用户信息,这里暂时使用这种方式将用户存储在内存中
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("zhangsan").password("123").authorities("p1").build());
-        manager.createUser(User.withUsername("lisi").password("456").authorities("p2").build());
-        return manager;
+    //指定用户自定义的类：指定daoAuthenticationProviderCustom
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProviderCustom);
     }
 
+    //配置用户信息服务，改为自定义验证
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        //这里配置用户信息,这里暂时使用这种方式将用户存储在内存中
+//        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+//        manager.createUser(User.withUsername("zhangsan").password("123").authorities("p1").build());
+//        manager.createUser(User.withUsername("lisi").password("456").authorities("p2").build());
+//        return manager;
+//    }
+
+    //密码编辑模式配置
     @Bean
     public PasswordEncoder passwordEncoder() {
 //        //密码为明文方式
-        return NoOpPasswordEncoder.getInstance();
-//        return new BCryptPasswordEncoder();
+//        return NoOpPasswordEncoder.getInstance();
+        //将用户输入的密码编码为BCrypt格式
+        return new BCryptPasswordEncoder();
     }
-
+    public static void main(String[] args) {
+        String password = "111111";
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        for(int i=0;i<10;i++) {
+            //每个计算出的Hash值都不一样
+            String hashPass = passwordEncoder.encode(password);
+            System.out.println(hashPass);
+            //虽然每次计算的密码Hash值不一样但是校验是通过的
+            boolean f = passwordEncoder.matches(password, hashPass);
+            System.out.println(f);
+        }
+    }
 
     //配置安全拦截机制
     @Override
@@ -59,6 +79,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().successForwardUrl("/login-success");//登录成功跳转到/login-success
     }
+
+
 
 
 
