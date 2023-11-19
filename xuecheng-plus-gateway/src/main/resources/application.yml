@@ -6,9 +6,13 @@ spring:
     active: dev
   cloud:
     nacos:
-     config:
-      import-check:
-       enabled: false
+      server-addr: 127.0.0.1:8848
+        discovery:
+          namespace: dev402
+          group: xuecheng-plus-project
+        config:
+          import-check:
+           enabled: false
   main:
     allow-circular-references: true
 server:

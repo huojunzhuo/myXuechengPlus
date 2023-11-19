@@ -1,0 +1,48 @@
+server:
+  servlet:
+    context-path: /checkcode
+  port: 63075
+spring:
+  application:
+    name: checkcode
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      discovery:
+        namespace: dev402
+        group: xuecheng-plus-project
+      config:
+        import-check:
+          enabled: false #确认从2021.0.5版本起，Spring Cloud将不再默认启用bootstrap 包，所以针对该问题，解决方案有
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: abc123
+    database: 0
+    lettuce:
+      pool:
+        max-active: 20
+        max-idle: 10
+        min-idle: 0
+    timeout: 10000
+      #redisson:
+    #配置文件目录
+    #config: classpath:singleServerConfig.yaml
+
+  #      config:
+#        namespace: dev166
+#        group: xuecheng-plus-project
+#        file-extension: yaml
+#        refresh-enabled: true
+#        shared-configs:
+#          - data-id: swagger-${spring.profiles.active}.yaml
+#            group: xuecheng-plus-common
+#            refresh: true
+#          - data-id: logging-${spring.profiles.active}.yaml
+#            group: xuecheng-plus-common
+#            refresh: true
+#          - data-id: redis-${spring.profiles.active}.yaml
+#            group: xuecheng-plus-common
+#            refresh: true
+  profiles:
+    active: dev

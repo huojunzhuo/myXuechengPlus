@@ -38,7 +38,6 @@ public class UserServiceImpl implements UserDetailsService {
 
     /**
      * 根据账号信息去查询用户信息
-     *
      * @param s the username identifying the user whose data is required.
      * @return UserDetails
      * @throws UsernameNotFoundException
@@ -54,10 +53,13 @@ public class UserServiceImpl implements UserDetailsService {
             throw new RuntimeException("认证请求数据格式不对");
         }
         String authType = authParamsDto.getAuthType();
-        AuthService authService = applicationContext.getBean(AuthService.class);
+        //此为单独账号密码校验
+//        AuthService authService = applicationContext.getBean(AuthService.class);
+        AuthService authService =  applicationContext.getBean("passwordAuthServiceImpl",AuthService.class);
         XcUserExt xcUserExt = authService.execute(authParamsDto);
         return getUserPrincipal(xcUserExt);
     }
+
 
     /**
      * 获取用户返回信息

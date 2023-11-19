@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 /**
  * ClassName: AuthServiceImpl
  *
- * @Description AuthService实现类
+ * @Description 单独账号密码校验
  * @Author huojz
  * @project myXuechengPlus
  * @create 2023 11 19 10:59
